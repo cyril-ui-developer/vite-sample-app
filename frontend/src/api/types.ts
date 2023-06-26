@@ -1,0 +1,21 @@
+export type EmployeeProps = {
+    id: string | number;
+    userId: number;
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    profileSummary: string;
+    avatarUrl?: string;
+    email: string;
+    tel?: string;
+    jobTitle?: string;
+    project?: string;
+    hireDate?: string;
+    reportTo?: string;
+    employeeType?: string;
+    socialMediaLinks?: string;
+    teamName?: string;
+    workLocation?: string;
+    createdDate: number;
+    lastUpdatedDate: number;
+  };
