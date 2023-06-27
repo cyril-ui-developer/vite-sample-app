@@ -6,31 +6,25 @@ type PaginationProps = {
   onSetPage: (value: number) => void;
 };
 
-export const usePagination = () => {
-  const [page, setPage] = useState(1);
-
-  const setNextPage = () => {
-    setPage((old) => old + 1);
-  };
-  const setPreviousPage = () => {
-    setPage((old) => Math.max(old - 1, 0));
-  };
-
-  return {page, setNextPage, setPreviousPage};
-};
 const Pagination: React.FC<PaginationProps> = ({ isPreviousData, data, onSetPage }) => {
-  const {page, setNextPage, setPreviousPage} = usePagination();
+    const [page, setPage] = useState(1);
 
+    const setNextPage = () => {
+      setPage((prev) => prev + 1);
+    };
+    const setPreviousPage = () => {
+      setPage((prev) => Math.max(prev - 1, 0));
+    };
 
-  useEffect(() => {
-    onSetPage(page);
-  }, [page]);
-   /*
-This code snippet demonstrates the Link property of the HTTP header. 
+    useEffect(() => {
+        onSetPage(page);
+    }, [page]);
+  
+/* This code snippet demonstrates the Link property of the HTTP header. 
 The Link header is a string that contains a list of URLs for the different pages of data,
  separated by commas. By splitting the Link header into an array of strings and searching
-  for the rel="prev" and rel="next" links, you can determine the URLs for the previous and next pages of data.
-  */
+  for the rel="prev" and rel="next" links, you can determine the URLs for the previous and next pages of data. */
+  
   const linkHeader = data?.headers?.get("Link");
   const links = linkHeader?.split(",");
   const prevLink = links?.find((l) => l.includes('rel="prev"'));
