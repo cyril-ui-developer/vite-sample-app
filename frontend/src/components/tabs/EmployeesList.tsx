@@ -1,12 +1,13 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "react-query";
+import { useState } from "react";
 
 import Table, { TableData } from "../Table";
 import { EmployeeProps } from "@api/types";
 import { TableRowsProps } from "@components/types";
 import { fetchEmployeesByPage } from "@api/employees";
-import { useState } from "react";
+import Pagination from "@components/Pagination";
 
 function EmployeesList() {
   const [page, setPage] = useState(1);
@@ -16,28 +17,17 @@ function EmployeesList() {
     isLoading,
     isSuccess,
     isError,
-    isPreviousData,
     isFetching,
+    isPreviousData
   } = useQuery<EmployeeProps[]>(
     ["fetch-employees", page],
     () => fetchEmployeesByPage(page),
     { keepPreviousData: true }
   );
 
-  console.log("employees", employees);
-
-  /*
-
-This code snippet demonstrates the Link property of the HTTP header. 
-The Link header is a string that contains a list of URLs for the different pages of data,
- separated by commas. By splitting the Link header into an array of strings and searching
-  for the rel="prev" and rel="next" links, you can determine the URLs for the previous and next pages of data.
-  */
-  const linkHeader = employees?.headers?.get('Link');
-  const links = linkHeader?.split(',');
-  const prevLink = links?.find(l => l.includes('rel="prev"'));
-  const nextLink = links?.find(l => l.includes('rel="next"'));
-  console.log(prevLink, nextLink, isPreviousData);
+  const handleSetPage = (value: number) => {
+    setPage(value);
+  };
 
   const tableColumns = [
     {
@@ -132,30 +122,11 @@ The Link header is a string that contains a list of URLs for the different pages
                 TableRow={TableRow}
                 data={employees.data}
               />
-              <div className="flex space-x-3 items-center justify-center mt-4">
-                <button
-                  onClick={() => setPage((old) => Math.max(old - 1, 0))}
-                  className={page === 1 ? "text-gray-400" : ""}
-                  disabled={page === 1 || !prevLink}
-                >
-                  Previous
-                </button>{" "}
-                <span className="text-lg font-italic">{page}</span>
-                <button
-                  onClick={() => {
-                    if (!isPreviousData) {
-                      setPage((old) => old + 1);
-                    }
-                  }}
-                  className={
-                    (isPreviousData || !nextLink) ? "text-gray-400" : ""
-                  }
-                  // Disable the Next Page button until we know a next page is available
-                  disabled={isPreviousData || !nextLink}
-                >
-                  Next
-                </button>
-              </div>
+              <Pagination
+                data={employees}
+                isPreviousData={isPreviousData}
+                onSetPage={handleSetPage}
+              />
               {isFetching ? <span>Loading...</span> : null}{" "}
             </>
           ) : (
